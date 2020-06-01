@@ -11,6 +11,24 @@ var diagonal = d3.svg.diagonal().projection(function(d) {
         return [d.y, d.x]
     });
 
+//定义直线
+var line = d3.svg.line()
+                 .x( function(point) { return point.ly; })
+                 .y( function(point) { return point.lx; });
+
+function lineData(d){
+    // i'm assuming here that supplied datum 
+    // is a link between 'source' and 'target'
+    var points = [
+        {lx: d.source.x, ly: d.source.y},
+        {lx: d.target.x, ly: d.target.y}
+    ];
+    return line(points);
+}
+
+// 切换为直线
+// diagonal = lineData;
+
 //TODO 单个节点的拖动，可能与zoom冲突，需要解决，目前未添加drag支持
 var drag = initDrag();
 var zoomListener = initZoom();
