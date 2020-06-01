@@ -3,7 +3,7 @@
 var width = 960,
     height = 700;
 var gRoot;
-var duration = 3000;
+var duration = 300;
 var arrowWidth = 20;
 
 //定义对角线生成器diagonal
@@ -11,18 +11,18 @@ var diagonal = d3.svg.diagonal().projection(function(d) {
         return [d.y, d.x]
     });
 
-//TODO 拖曳和缩放
+//TODO 单个节点的拖动，可能与zoom冲突，需要解决，目前未添加drag支持
 var drag = initDrag();
 var zoomListener = initZoom();
 
 //定义svg
-var svg = d3.select("body").append("svg")
+var svg = d3.select("body").call(zoomListener)
+    .append("svg")
     .attr("width", width)
     .attr("height", height)
     .append("g")
     .attr("transform", "translate(40,0)")
-    //TODO zoom 不生效
-    // .call(zoomListener);
+    .on("dblclick.zoom", null)
 
 var defs = svg.append("defs");
 var arrowMarker = defs.append("marker")
@@ -199,12 +199,13 @@ function initDrag(){
 
 function initZoom(){
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-    var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 10]).on("zoom", zoom);
+    var zoomListener = d3.behavior.zoom()
+    .scaleExtent([0.1, 3])
+    .on("zoom", zoom)
 
     return zoomListener
 }
 
 function zoom() {
-    // console.log(svg);
-    svg.attr("transform", "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
+    d3.select(this).select('svg').select('g').attr("transform", "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
 }
